@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.2
+
+### Patch Changes
+
+- 1efebf1: Return the typed component API from the test registration helper.
+
 ## 0.3.1
 
 - Updates the types of `ctx` args to match convex 1.42+
