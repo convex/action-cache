@@ -16,7 +16,6 @@ env:
 
 jobs:
   build:
-    if: github.repository_owner == 'convex'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
