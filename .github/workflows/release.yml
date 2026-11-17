@@ -18,6 +18,8 @@ env:
 
 jobs:
   build:
+    # Manual runs must target a v<version> tag, not a branch with that name.
+    if: github.ref_type == 'tag'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
