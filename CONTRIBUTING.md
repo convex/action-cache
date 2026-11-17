@@ -37,8 +37,9 @@ Review and merge the release PR when ready. Click **Approve workflows to run**
 on the PR if its checks are waiting for approval. To refresh it manually, run
 the [Update release PR workflow](./.github/workflows/version.yml) on main.
 
-To release, tag the merged release PR's commit with `v<version>`. This starts
-the [Release workflow](./.github/workflows/release.yml):
+When the release PR merges, CI tags the commit that set the new version as
+`v<version>` and starts the [Release workflow](./.github/workflows/release.yml)
+on that tag. To release a different commit, tag it yourself:
 
 ```sh
 gh api repos/convex/action-cache/git/refs -f ref=refs/tags/v1.2.3 -f sha=<commit>
@@ -84,6 +85,8 @@ identifier selects the npm channel, such as `alpha`.
 The tag records intent to release; npm is the source of truth for what was
 staged. If the workflow fails, check npm's staged packages first:
 
+- Tagged, but Release didn't start: start it on the tag with
+  `gh workflow run release.yml -R convex/action-cache --ref v1.2.3`.
 - Not staged: rerun the failed jobs
   (`gh run rerun <run-id> -R convex/action-cache --failed`), for example after
   pushing `main` if the tag went first. A rerun uses the run's original commit

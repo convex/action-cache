@@ -3,6 +3,8 @@ name: Release
 on:
   push:
     tags: ["v*"]
+  # Started on a tag by the version workflow, or by hand to retry a tag.
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}
