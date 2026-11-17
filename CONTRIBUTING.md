@@ -49,8 +49,7 @@ Or, from a local clone: `git tag v1.2.3 <commit> && git push origin v1.2.3`.
 
 The tag must match `package.json`'s version. Stable releases must be on `main`;
 the commit may be older than the current tip. The workflow builds and tests that
-commit, stages the tested package on npm, then creates a GitHub Release with the
-version's changelog notes.
+commit, then stages the tested package on npm.
 
 Review the package on npm's **Staged Packages** page and approve with 2FA, or
 run:
@@ -85,14 +84,20 @@ identifier selects the npm channel, such as `alpha`.
 The tag records intent to release; npm is the source of truth for what was
 staged. If the workflow fails, check npm's staged packages first:
 
-- Not staged: rerun the workflow, or fix the source and move the tag to the
-  corrected commit. Rerunning a run uses its original commit.
+- Not staged: rerun the failed jobs, for example after pushing `main` if the tag
+  went first. A rerun uses the run's original commit and works for 30 days:
+
+  ```sh
+  id=$(gh run list -R convex/action-cache -w release.yml -b v1.2.3 -L 1 --json databaseId -q '.[0].databaseId')
+  gh run rerun "$id" -R convex/action-cache --failed
+  ```
+
+  To release a different commit, fix the source and move the tag:
 
   ```sh
   gh api -X PATCH repos/convex/action-cache/git/refs/tags/v1.2.3 -f sha=<commit> -F force=true
   ```
 
-- Staged, but the GitHub Release step failed: rerun the failed job.
 - Staged, but rejected in review: `npm stage reject <stage-id>` frees the
   version, so you can move the tag to a corrected commit. A published version
   cannot be reused; prepare a new version instead.

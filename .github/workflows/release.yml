@@ -141,32 +141,3 @@ jobs:
           if test -f "$RUNNER_TEMP/npm-stage.log"; then
             cat "$RUNNER_TEMP/npm-stage.log" >> "$GITHUB_STEP_SUMMARY"
           fi
-
-  github-release:
-    needs: [build, stage]
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    permissions:
-      contents: write
-    steps:
-      - name: Create or update the GitHub Release
-        env:
-          GH_TOKEN: ${{ github.token }}
-          VERSION: ${{ needs.build.outputs.version }}
-          CHANNEL: ${{ needs.build.outputs.channel }}
-        run: |
-          gh api -H "Accept: application/vnd.github.raw" \
-            "repos/$GITHUB_REPOSITORY/contents/CHANGELOG.md?ref=$GITHUB_SHA" \
-            > "$RUNNER_TEMP/CHANGELOG.md"
-          awk -v version="$VERSION" '/^## / { if (active) exit; active = ($0 == "## " version); next } active' \
-            "$RUNNER_TEMP/CHANGELOG.md" > "$RUNNER_TEMP/notes.md"
-          prerelease=false
-          [[ "$CHANNEL" == latest ]] || prerelease=true
-          if gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            gh release edit "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" \
-              --notes-file "$RUNNER_TEMP/notes.md" --prerelease="$prerelease"
-          else
-            gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" \
-              --verify-tag --title "$GITHUB_REF_NAME" \
-              --notes-file "$RUNNER_TEMP/notes.md" --prerelease="$prerelease"
-          fi
