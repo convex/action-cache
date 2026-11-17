@@ -41,8 +41,7 @@ To release, tag the merged release PR's commit with `v<version>`. This starts
 the [Release workflow](./.github/workflows/release.yml):
 
 ```sh
-sha=$(gh pr view <release-pr> -R convex/action-cache --json mergeCommit -q .mergeCommit.oid)
-gh api repos/convex/action-cache/git/refs -f ref=refs/tags/v1.2.3 -f sha="$sha"
+gh api repos/convex/action-cache/git/refs -f ref=refs/tags/v1.2.3 -f sha=<commit>
 ```
 
 Or, from a local clone: `git tag v1.2.3 <commit> && git push origin v1.2.3`.
@@ -85,13 +84,9 @@ identifier selects the npm channel, such as `alpha`.
 The tag records intent to release; npm is the source of truth for what was
 staged. If the workflow fails, check npm's staged packages first:
 
-- Not staged: rerun the failed jobs, for example after pushing `main` if the tag
-  went first. A rerun uses the run's original commit and works for 30 days:
-
-  ```sh
-  id=$(gh run list -R convex/action-cache -w release.yml -b v1.2.3 -L 1 --json databaseId -q '.[0].databaseId')
-  gh run rerun "$id" -R convex/action-cache --failed
-  ```
+- Not staged: rerun the failed jobs (`gh run rerun <run-id> --failed`), for
+  example after pushing `main` if the tag went first. A rerun uses the run's
+  original commit and works for 30 days.
 
   To release a different commit, fix the source and move the tag:
 
