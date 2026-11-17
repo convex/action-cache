@@ -48,8 +48,9 @@ gh api repos/convex/action-cache/git/refs -f ref=refs/tags/v1.2.3 -f sha="$sha"
 Or, from a local clone: `git tag v1.2.3 <commit> && git push origin v1.2.3`.
 
 The tag must match `package.json`'s version. Stable releases must be on `main`;
-the commit may be older than the current tip. The workflow builds and tests that
-commit, then stages the tested package on npm.
+the commit may be older than the current tip. GitHub runs the release workflow
+from the tagged commit, so the commit must include it. The workflow builds and
+tests that commit, then stages the tested package on npm.
 
 Review the package on npm's **Staged Packages** page and approve with 2FA, or
 run:
