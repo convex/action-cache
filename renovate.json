@@ -5,7 +5,7 @@
   "platformAutomerge": false,
   "minimumReleaseAge": "14 days",
   "lockFileMaintenance": {
-    "schedule": ["* * * * 1"],
+    "schedule": ["at any time"],
     "minimumReleaseAge": null
   },
   "packageRules": [
